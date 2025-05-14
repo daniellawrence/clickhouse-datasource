@@ -380,14 +380,18 @@ const generateLogsQuery = (_options: QueryBuilderOptions): string => {
   return concatQueryParts(queryParts);
 }
 
-export function luceneToWhereClause(input: string): string {
-  // Simple conversion: key:value -> key = 'value'
+const luceneToWhereClause = (input: string): string => {
   return input
     .split(/\s+/)
     .map((term) => {
       const [key, value] = term.split(':');
       if (!key || !value) return '';
       const safeValue = value.replace(/'/g, "\\'");
+      if (safeValue.includes("*")) {
+        const safeValueWildcard = safeValue.replaceAll("*", "%")
+
+        return `${key} LIKE '${safeValueWildcard}'`;
+      }
       return `${key} = '${safeValue}'`;
     })
     .filter(Boolean)
