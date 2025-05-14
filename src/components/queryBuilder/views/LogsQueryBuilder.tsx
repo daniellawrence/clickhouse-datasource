@@ -38,6 +38,7 @@ interface LogsQueryBuilderState {
   limit: number;
   filters: Filter[];
   logMessageLike: string;
+  luceneQuery: string;
 }
 
 export const LogsQueryBuilder = (props: LogsQueryBuilderProps) => {
@@ -64,6 +65,8 @@ export const LogsQueryBuilder = (props: LogsQueryBuilderProps) => {
     orderBy: builderOptions.orderBy || [],
     limit: builderOptions.limit || 0,
     logMessageLike: builderOptions.meta?.logMessageLike || '',
+    luceneQuery: builderOptions.meta?.luceneQuery || '',
+    
     }), [builderOptions]);
   const [showConfigWarning, setConfigWarningOpen] = useState(datasource.getDefaultLogsColumns().size === 0 && builderOptions.columns?.length === 0);
 
@@ -89,6 +92,7 @@ export const LogsQueryBuilder = (props: LogsQueryBuilderProps) => {
       limit: next.limit,
       meta: {
         logMessageLike: next.logMessageLike,
+        luceneQuery: next.luceneQuery,
       }
     }));
   }, builderState);
@@ -124,6 +128,7 @@ export const LogsQueryBuilder = (props: LogsQueryBuilderProps) => {
         selectedColumns={builderState.selectedColumns}
         onSelectedColumnsChange={onOptionChange('selectedColumns')}
       />
+
       <div className="gf-form">
         <ColumnSelect
           disabled={builderState.otelEnabled}
@@ -195,6 +200,7 @@ export const LogsQueryBuilder = (props: LogsQueryBuilderProps) => {
         table={builderOptions.table}
       />
       <LogMessageLikeInput logMessageLike={builderState.logMessageLike} onChange={onOptionChange('logMessageLike')} />
+      <LuceneQueryInput luceneQuery={builderState.luceneQuery} onChange={onOptionChange('luceneQuery')} />
     </div>
   );
 }
@@ -203,6 +209,13 @@ interface LogMessageLikeInputProps {
   logMessageLike: string;
   onChange: (logMessageLike: string) => void;
 };
+
+interface LuceneQueryInputProps {
+  luceneQuery: string;
+  onChange: (luceneQuery: string) => void;
+};
+
+
 
 const LogMessageLikeInput = (props: LogMessageLikeInputProps) => {
   const [input, setInput] = useState<string>('');
@@ -228,6 +241,44 @@ const LogMessageLikeInput = (props: LogMessageLikeInputProps) => {
       { logMessageLike &&
         <Button
           data-testid={allSelectors.QueryBuilder.LogsQueryBuilder.LogMessageLikeInput.input}
+          variant="secondary"
+          size="md"
+          onClick={() => onChange('')}
+          className={styles.Common.smallBtn}
+          tooltip={allLabels.components.expandBuilderButton.tooltip}
+        >
+          {clearButton}
+        </Button>
+      }
+    </div>
+  )
+}
+
+
+const LuceneQueryInput = (props: LuceneQueryInputProps) => {
+  const [input, setInput] = useState<string>('');
+  const { luceneQuery, onChange } = props;
+  const { label, tooltip, clearButton } = allLabels.components.LogsQueryBuilder.luceneQuery;
+
+  useEffect(() => {
+    setInput(luceneQuery);
+  }, [luceneQuery]);
+
+  return (
+    <div className="gf-form">
+      <InlineFormLabel width={8} className="query-keyword" tooltip={tooltip}>
+        {label}
+      </InlineFormLabel>
+      <Input
+        width={200}
+        value={input}
+        type="string"
+        onChange={e => setInput(e.currentTarget.value)}
+        onBlur={() => onChange(input)}
+      />
+      { luceneQuery &&
+        <Button
+          data-testid={allSelectors.QueryBuilder.LogsQueryBuilder.LuceneQueryInput.input}
           variant="secondary"
           size="md"
           onClick={() => onChange('')}

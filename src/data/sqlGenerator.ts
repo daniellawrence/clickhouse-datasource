@@ -337,8 +337,10 @@ const generateLogsQuery = (_options: QueryBuilderOptions): string => {
 
   const filterParts = getFilters(options);
   const hasLogMessageFilter = logMessage && options.meta?.logMessageLike;
+  const hasLuceneQuery = logMessage && options.meta?.luceneQuery;
 
-  if (filterParts || hasLogMessageFilter) {
+
+  if (filterParts || hasLogMessageFilter || hasLuceneQuery) {
     queryParts.push('WHERE');
   }
 
@@ -346,11 +348,21 @@ const generateLogsQuery = (_options: QueryBuilderOptions): string => {
     queryParts.push(filterParts);
   }
 
+  if (hasLuceneQuery) {
+    if (filterParts) {
+      queryParts.push('AND');
+    }
+    const luceneQueryParts = luceneToWhereClause(options.meta!.luceneQuery || "");
+
+    queryParts.push(`(${luceneQueryParts})`);
+  }
+
+
   if (hasLogMessageFilter) {
     if (filterParts) {
       queryParts.push('AND');
     }
-
+  
     queryParts.push(`(${logMessage.alias || logMessage.name} LIKE '%${options.meta!.logMessageLike}%')`);
   }
 
@@ -367,6 +379,21 @@ const generateLogsQuery = (_options: QueryBuilderOptions): string => {
 
   return concatQueryParts(queryParts);
 }
+
+export function luceneToWhereClause(input: string): string {
+  // Simple conversion: key:value -> key = 'value'
+  return input
+    .split(/\s+/)
+    .map((term) => {
+      const [key, value] = term.split(':');
+      if (!key || !value) return '';
+      const safeValue = value.replace(/'/g, "\\'");
+      return `${key} = '${safeValue}'`;
+    })
+    .filter(Boolean)
+    .join(' AND ');
+}
+
 
 /**
  * Generates a simple time series query. Includes user selected columns.

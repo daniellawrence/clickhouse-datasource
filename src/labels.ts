@@ -1,3 +1,4 @@
+
 import { ColumnHint } from "types/queryBuilder";
 
 export default {
@@ -327,6 +328,10 @@ export default {
       label: 'Columns',
       tooltip: 'A list of columns to include in the query'
     },
+    LuceneQuery: {
+      label: 'LuceneQuery',
+      tooltip: 'LuceneQuery'
+    },
     OtelVersionSelect: {
       label: 'Use OTel',
       tooltip: 'Enables Open Telemetry schema versioning'
@@ -385,6 +390,11 @@ export default {
       logMessageFilter: {
         label: 'Message Filter',
         tooltip: 'Applies a LIKE filter to the log message body',
+        clearButton: 'Clear'
+      },
+      luceneQuery: {
+        label: 'lucene Query',
+        tooltip: 'lucene Query',
         clearButton: 'Clear'
       },
       logLevelFilter: {

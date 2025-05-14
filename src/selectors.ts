@@ -64,6 +64,7 @@ export const Components = {
         AddLabel: 'Field',
         RemoveLabel: '',
       },
+      
       AGGREGATES: {
         label: 'Aggregates',
         tooltipTable: 'Aggregate functions to use',
@@ -142,6 +143,9 @@ export const Components = {
     LogsQueryBuilder: {
       LogMessageLikeInput: {
         input: 'query-builder__logs-query-builder__log-message-like-input__input',
+      },
+      LuceneQueryInput: {
+        input: 'query-builder__logs-query-builder__lucene-query-input__input',
       }
     },
     AggregateEditor: {

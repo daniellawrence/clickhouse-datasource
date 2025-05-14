@@ -47,6 +47,7 @@ export interface QueryBuilderOptions {
     // Logs
     liveView?: boolean;
     logMessageLike?: string;
+    luceneQuery?: string;
 
     // Trace
     traceDurationUnit?: TimeUnit;

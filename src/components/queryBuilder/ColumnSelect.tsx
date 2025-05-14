@@ -55,7 +55,7 @@ export const ColumnSelect = (props: ColumnSelectProps) => {
     onColumnChange(nextColumn);
   }
 
-  const labelStyle = 'query-keyword ' + (inline ? styles.QueryEditor.inlineField : '');
+  const labelStyle =  'query-keyword ' + (inline ? styles.QueryEditor.inlineField : '');
 
   return (
     <div className="gf-form">
@@ -70,7 +70,7 @@ export const ColumnSelect = (props: ColumnSelectProps) => {
         placeholder={selectedColumnName || undefined}
         onChange={onChange}
         width={wide ? 25 : 20}
-        menuPlacement={'bottom'}
+        menuPlacement={'top'}
         isClearable={clearable === undefined || clearable}
         allowCustomValue
       />
